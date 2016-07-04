@@ -1,0 +1,60 @@
+---
+title: "Investigating Tooth Growth by supplement"
+author: "Jonathan Bennett"
+date: "Saturday, March 21, 2015"
+output: html_document
+---
+##Exploratory Data
+
+```{r exploratory}
+    coplot(len ~ dose | supp, data = ToothGrowth, panel = panel.smooth,
+           xlab = "ToothGrowth data: length vs dose, given type of supplement")
+    oj<-ToothGrowth[ToothGrowth[,2]=="OJ",]
+    vc<-ToothGrowth[ToothGrowth[,2]=="VC",]
+    hist(oj$len)
+    hist(vc$len)    
+    mean(oj$len)
+    sd(oj$len)
+    length(oj$len)
+    mean(vc$len)
+    sd(vc$len)
+    length(vc$len)
+```
+##Confidence Intervals
+###The assumption here is that it's normally distributed.
+```{r confidenceinterval1}
+    ci <- .975
+    ojci <- mean(oj$len)+c(-1,1)*qnorm(ci)*sd(oj$len)/sqrt(length(oj$len))
+    vcci <- mean(vc$len)+c(-1,1)*qnorm(ci)*sd(vc$len)/sqrt(length(vc$len))
+    confidencelevel <- (2*ci-1)*100
+```
+####The `r confidencelevel`% for OJ is between `r ojci[1]` and `r ojci[2]`.
+####The `r confidencelevel`% for Vitamin C is between `r vcci[1]` and `r vcci[2]`.
+```{r confidenceinterval2}
+    ci <- .95
+    ojci <- mean(oj$len)+c(-1,1)*qnorm(ci)*sd(oj$len)/sqrt(length(oj$len))
+    vcci <- mean(vc$len)+c(-1,1)*qnorm(ci)*sd(vc$len)/sqrt(length(vc$len))
+    confidencelevel <- (2*ci-1)*100
+```
+####The `r confidencelevel`% for OJ is between `r ojci[1]` and `r ojci[2]`.
+####The `r confidencelevel`% for Vitamin C is between `r vcci[1]` and `r vcci[2]`.  
+
+
+###The assumption here is that it's a poisson distribution.
+```{r confidenceinterval3}
+    ci <- .95
+    ojci <- mean(oj$len)+c(-1,1)*pnorm(ci)*sd(oj$len)/sqrt(length(oj$len))
+    vcci <- mean(vc$len)+c(-1,1)*pnorm(ci)*sd(vc$len)/sqrt(length(vc$len))
+    confidencelevel <- (2*ci-1)*100
+```
+####The `r confidencelevel`% for OJ is between `r ojci[1]` and `r ojci[2]`.
+####The `r confidencelevel`% for Vitamin C is between `r vcci[1]` and `r vcci[2]`.
+
+```{r confidenceinterval4}
+    ci <- .95
+    ojci <- mean(oj$len)+c(-1,1)*pnorm(ci)*sd(oj$len)/sqrt(length(oj$len))
+    vcci <- mean(vc$len)+c(-1,1)*pnorm(ci)*sd(vc$len)/sqrt(length(vc$len))
+    confidencelevel <- (2*ci-1)*100
+```
+####The `r confidencelevel`% for OJ is between `r ojci[1]` and `r ojci[2]`.
+####The `r confidencelevel`% for Vitamin C is between `r vcci[1]` and `r vcci[2]`.

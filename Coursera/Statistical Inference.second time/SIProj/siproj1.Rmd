@@ -1,0 +1,42 @@
+---
+title: "Validating the Central Limit Theorem on an Exponential Distribution"
+author: "Jonathan Bennett"
+date: "Sunday, March 13, 2016"
+output: html_document
+---
+##Overview
+####In probability theory, [the central limit theorem (CLT)](http://en.wikipedia.org/wiki/Central_limit_theorem) states that, given certain conditions, the arithmetic mean of a sufficiently large number of iterates of independent random variables, each with a well-defined expected value and well-defined variance, will be approximately normally distributed, regardless of the underlying distribution. (source=wikipedia)
+####This analysis will sample 1000 different means of an exponential distribution of size 40, and calculate the simulated mean to show that it approaches the theoretical mean, that the distribution of those samples is approximately normally distributed, and that the standard deviation of the samples approaches the theoretical value of standard error.
+
+##Simulations
+```{r simulations}
+    #generate 1000 means of 40 exponentially distributed numbers with lambda of 0.2
+    #sapply executes 1000 times and creates a vector of length 1000, with each member being the average of
+    #40 exponentially distributed numbers with a lambda of 1
+    #the same thing is done to generate a list of standard deviations
+    set.seed(42)
+    lambda <- 0.2
+    samplesize <- 40
+    totalsimulations <- 1000
+    means <- unlist(lapply(seq_along(1:totalsimulations),function(x) mean(rexp(samplesize,lambda))))
+    simulationmean <- mean(means)
+    simulationsd <- sd(means)
+    simulationvar <- simulationsd^2
+    theoreticalmean <- 1/lambda
+    theoreticalsd <- (1/lambda)/sqrt(samplesize)
+    theoreticalvar <- theoreticalsd^2
+    meanaccuracy <- abs(round((simulationmean - theoreticalmean)/theoreticalmean*100,4))
+    sdaccuracy <- abs(round((simulationsd - theoreticalsd)/theoreticalsd*100,4))
+    varaccuracy <- abs(round((simulationvar - theoreticalvar)/theoreticalvar*100,4))
+```
+####The theoretical mean is `r theoreticalmean` and the simulation mean is `r simulationmean`.  The simulation mean is accurate within `r meanaccuracy`%.  (Validation of Central Limit Theorem)
+####The theoretical sample standard deviation (standard error) is `r theoreticalsd`.  The simulation standard deviation is `r simulationsd`.  The simulated standard deviation is accurate within `r sdaccuracy`%. (Validation of the standard error formula = sd(population)/sqrt(samplesize))
+####The theoretical variance is `r theoreticalvar`.  The simulation variance is `r simulationvar`.  The simulated variance is accurate within `r varaccuracy`%.
+
+The Central Limit Theorem says the sample will be approximately normally distributed. In order to visually validate this principle I plotted the distribution of the simulation means.  It approximates a normal distribution.  It is worth noting that increasing the number of simulations (say, to 100,000) greatly increases the accuracy of the approximations and creates a smoother, normalized curve approximation.  Superimposed upon the histogram is a normal curve.
+
+```{r plot}
+    hist(means,prob=TRUE,breaks=50, xlab = "Sample means bucket (centered at 5)", main = "Histograms of Sample Means")
+    curve(dnorm(x, mean=1/lambda, sd=1/(lambda*(samplesize^.5))), add=TRUE)
+    print(summary(means))
+```

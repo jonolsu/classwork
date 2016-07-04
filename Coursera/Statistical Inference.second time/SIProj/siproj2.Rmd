@@ -1,0 +1,47 @@
+---
+title: "Investigating Tooth Growth by Supplement and Dosage"
+author: "Jonathan Bennett"
+date: "Sunday, March 13, 2016"
+output: html_document
+---
+##Exploratory Data
+It appears as though we have two different supplements (OJ and VC), each administered at three differnt doses (0.5, 1.0, 2.0).  Each combination of supplement/dose was given 10 times.  Based on the histograms I'm not prepared to assume these distributions are normal, but there are no outliers so I will not perform any transformations.
+```{r exploratory}
+    coplot(len ~ dose | supp, data = ToothGrowth, panel = panel.smooth,
+           xlab = "ToothGrowth data: length vs dose, given type of supplement")
+    ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+    oj<-ToothGrowth[ToothGrowth[,2]=="OJ",]
+    vc<-ToothGrowth[ToothGrowth[,2]=="VC",]
+    hist(oj$len)
+    hist(vc$len)
+    summary(oj)
+    summary(vc)
+```
+
+##Statistical Inference
+Generically speaking, I'd like to examine whether supplements/dosages led to a statistically significant difference in tooth growth.  Since we have six distinct experiments (two supplements times three doses) a completely exhaustive approach would be to compare each experiment individually against every other experiment for a total combination of fifteen comparisons, because c(6,2)=15.  However, in the interest of brevity, I'll first determine whether one supplement (regardless of dosage) is different from another.  I don't feel too bad about ignoring the dosages in this comparison because there are an equal number of each dosage for both supplements.  
+  
+Let's employ t confidence intervals since I'm not positive the data is normally distributed.  These are not paired, and I will pool the variance and assume the variance is constant across the two groups.
+
+```{r supplementinvestigation1}
+n1 <- nrow(oj)
+x1 <- oj$len
+n2 <- nrow(vc)
+x2 <- vc$len
+md <- mean(x1)-mean(x2)
+sp <- sqrt(((n1-1)*sd(x1)^2+(n2-1)*sd(x2)^2)/(n1+n2-2)) #square root of pooled variance
+semd <- sp * sqrt(1/n1 + 1/n2)
+ci <- md + c(-1,1)*qt(.975,n1+n2-2)*semd
+# for reference, you'll get the same results with this: t.test(oj$len,vc$len,paired=FALSE,var.equal=TRUE,conf.level = 0.95)$conf
+```
+The interval is `r ci`.  Since this interval includes zero, we can't rule out the possibility that there is no difference between ANY dosage of OJ and ANY dosage of VC.  Let's compare between like dosages now.
+```{r supplementinvestigation2}
+smalldose <- t.test(oj$len[oj$dose==.5],vc$len[vc$dose==.5],paired=FALSE,var.equal=TRUE,conf.level = 0.95)$conf
+meddose <- t.test(oj$len[oj$dose==1],vc$len[vc$dose==1],paired=FALSE,var.equal=TRUE,conf.level = 0.95)$conf
+largedose <- t.test(oj$len[oj$dose==2],vc$len[vc$dose==2],paired=FALSE,var.equal=TRUE,conf.level = 0.95)$conf
+```
+smalldose CI is `r smalldose`.  
+meddose CI is `r meddose`.  
+largedose CI is `r largedose`.  
+  
+This tells us we can say, with 95% certainty, that we can expect additional growth using OJ vs VC for the small and medium dosages since the confidence intervals does not contain zero.  However, the large dosage contains zero, so we can not rule out that there is no difference between VC and OJ when administering the large dosage.  These inferential findings confirm initial assumptions based on the data visiualization.
