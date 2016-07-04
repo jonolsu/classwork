@@ -1,0 +1,155 @@
+---
+title: "Regression Analysis Project"
+author: "Jonathan Bennett"
+output: html_document
+---
+
+##Table of Contents
+REPORT  
+1. Executive Summary  
+2. Coefficient Interpretataion
+  
+APPENDIX  
+3. Exploratory Analysis  
+4. Model Selection  
+5. Residual Plot  
+6. Model Comparison    
+
+##1. Executive Summary
+This analysis addresses the relationship between a group of variables and the resulting miles per
+gallon for a subset of cars from the mtcars dataset.  Specificically the analysis determines whether
+an automatic or manual transmission achieves better gas mileage, and attempts to quantify the
+difference.  For details on the dataset, please visit:  
+https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html  
+  
+Findings:
+Using the AIC approach, an automatic transmission decreased gas mileage by 0.07 MPG.  Appropriate
+input variables were wt, cyl, hp, and, of course, am.  However, the standard error for the am
+is 1.4, meaning that a 95% confidence interval spans -2.84 to 2.69.  Therefore the finding that
+an automatic transmission is less efficient can't be stated with a 95% guarantee.  Rather, the
+transmission type is inconclusive as a predictor of MPG.
+  
+This analysis employs a rigorous quantitative and qualatitive approach to model selection.  This
+investigates five model approaches:  
+1) Use all regression variables (cyl, disp, hp, drat, wt, qsec, am, gear, vs, carb)  
+2) Akaike Information Criterion (AIC-http://en.wikipedia.org/wiki/Akaike_information_criterion)  
+3) Bayesian Information Criterion (BIC-http://en.wikipedia.org/wiki/Bayesian_information_criterion)  
+4) Only use am as a predictor  
+  
+The AIC approach made the most sense because it optimizes fit without overfitting.  Other approaches
+minimized rsquared values, but introducing variables uncorrelated to the output will increase 
+rsquared values so minimizing rsquared was not a determining factor.  This  analysis performed some
+data maniuplation prior to fitting:  
+1) Converted appropriate inputs to factor type (am, cyl, gear, car, vs).  This made sense because
+the data were not numeric in nature.  Arguably gear, carb and cyl may be, but am and vs are most
+certainly not.  
+2) Removed training outliers that were outside of the 95th percentile.  Given the few data points,
+outliers were likely to skew results so the outliers were deemed as detrimental to a good fit for
+purposes of this investigation.  
+  
+For purposes of brevity, much of the code in this Rmd file has been hidden as the assignment
+mandated a length of less than seven pages total.
+
+##2. Coefficient Interpretation
+The regression equation to obtain the mpg is:
+mpg = 35.92996 - 3.70181 * wt - 0.02670 * hp - 1.35179 (if 6 cylinders) - 1.16743 (if 8 cylinders)
+- 0.07253 (if automatic transmission)  
+We start at 35.92996 MPG (intercept) before adding other elements.  It makes sense the we lose
+appx 3.70 MPG for each unit of weight, and 1.35 for each unit of hp.  A four cylinder car has no MPG
+adder, but both 6 and 8 cylinders reduce gas mileage.  The regression equation indicates 8 cylinder
+cars are more efficient (less or a reduction) than 6 cylinder cars, although this might not folow
+intuition.  More data or analysis is warranted on this variable.  
+
+```{r globals, echo=FALSE}
+require(ggplot2)
+require(reshape)
+require(leaps)
+
+confidence = 1.96 # Exclude datapoints that don't fall within the 95% confidence interval
+
+filteroutlier <- function(df,zvalue=3){
+    #receives a numeric dataframe
+    #returns a boolean dataframe indicating whether each element is between plus or minus z sds
+    #default is three standard deviations if parameter is not provided
+    output <- (df <= (zvalue*sd(df)+mean(df))) & ((df >= (-zvalue*sd(df)+mean(df))))
+}
+```
+
+##3. Exploratory Analysis
+```{r dataexplore}
+d <- melt(mtcars)
+ggplot(d,aes(x = value)) +
+    facet_wrap(~variable,scales = "free_x") +
+    geom_histogram()
+
+# d <- plot(mtcars$mpg) #not generated for purposes of brevity
+
+#look at outliers and remove all datapoint outside of +- two standard deviations
+boxplot(mtcars)
+outliers <- !((filteroutlier(mtcars$mpg,confidence)) & (filteroutlier(mtcars$disp,confidence)) &
+                  (filteroutlier(mtcars$hp,confidence)) & (filteroutlier(mtcars$drat,confidence)) &
+                  (filteroutlier(mtcars$wt,confidence)) & (filteroutlier(mtcars$qsec,confidence)))
+mtcars2 <- mtcars[!outliers,]
+
+```
+##4. Model Selection
+```{r modelselection, echo = FALSE}
+mtcars3 <- mtcars2
+mtcars3$am <- as.factor(mtcars3$am)
+mtcars3$cyl <- as.factor(mtcars3$cyl)
+mtcars3$gear <- as.factor(mtcars3$gear)
+mtcars3$carb <- as.factor(mtcars3$carb)
+mtcars3$vs <- as.factor(mtcars3$vs)
+
+require(leaps)
+leaps <- regsubsets(mpg ~ cyl + disp + hp + drat + wt + qsec + vs + am + gear + carb,
+                    data = mtcars3, nbest = 3)
+
+#plot(leaps, scale ="bic")
+
+null <- lm(mpg ~ 1, data = mtcars3)
+full <- lm(mpg ~ cyl + disp + hp + drat + wt + qsec + am + gear + vs + carb, data = mtcars3)
+step(null, scope=list(lower=null, upper=full),direction="both")
+
+```
+
+```{r regression, echo = TRUE}
+#Best AIC with transmission variable approach
+fit_aic <- lm(mpg ~ wt + cyl + hp + am, data = mtcars3)
+#summary(fit_aic)
+
+#BIC approach
+fit_bic <- lm(mpg ~ wt + qsec + am, data = mtcars3)
+
+#all variables
+fit_all <- lm(mpg ~ cyl + disp + hp + drat + wt + qsec + am + gear + vs + carb, data = mtcars3)
+
+#only am
+fit_onlyam <- lm(mpg ~ am, data = mtcars3)
+```
+```{r results, echo=FALSE}
+approach <- c("All_variables","AIC","BIC","only_am")
+automatic_mpgadder <- c(coef(fit_all)[names(coef(fit_all))=="am1"],
+                        coef(fit_aic)[names(coef(fit_aic))=="am1"],
+                        coef(fit_bic)[names(coef(fit_bic))=="am1"],
+                        coef(fit_onlyam)[names(coef(fit_onlyam))=="am1"])
+rsquared <- c(summary(fit_all)$r.squared,
+             summary(fit_aic)$r.squared,
+             summary(fit_bic)$r.squared,
+             summary(fit_onlyam)$r.squared)
+degreesf <- c(length(names(coef(fit_all))),
+              length(names(coef(fit_aic))),
+              length(names(coef(fit_bic))),
+              length(names(coef(fit_onlyam))))
+results <- data.frame(approach,automatic_mpgadder,rsquared, degreesf)
+```
+
+##5. Residual Plot
+```{r plotfit, echo=FALSE}
+plot(fit_aic$resid)
+```
+
+##6. Model Comparisons
+```{r comparisons, echo=FALSE}
+results
+```
