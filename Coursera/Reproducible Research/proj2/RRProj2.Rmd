@@ -1,0 +1,131 @@
+---
+title: "Public Health and Economic Impacts due to Severe Weather Events"
+output: html_document
+---
+##1.0 Synopsis
+Storms and other severe weather events can cause both public health and economic problems for 
+communities and municipalities. Using data from the U.S. National Oceanic and Atmospheric 
+Administration's (NOAA) storm database, this analysis demonstrates an answer to these questions:  
+a) Across the United States, which types of events are most harmful with respect to population 
+health? - Tornados  
+b) Across the United States, which types of events have the greatest economic consequences? - Flood
+
+##2.0 Data Processing
+
+###2.1 Global Constants, Libraries, and Functions
+```{r constants}
+    #Constants:
+    injury_fatality_ratio <- 20
+    topcasualty <- 7 #display the top "x" EVTYPE as measured by casualty
+    topdamage <- 6 #display the top "x" EVTYPE as measuered by total damage
+
+    #Libraries:
+    require(curl)
+
+    #Functions:
+    refactor <- function(x) {
+        #http://biocozy.blogspot.com/2011/08/refactor-in-r.html
+        x <- factor(x, levels=levels(x)[levels(x) %in% x] )
+        return(x)
+    }
+```
+###2.2 Read Data
+```{r readdata}
+    # this data is downloaded from a website (link=file_url, file=data_file_name).
+    #This is the original raw data, there is no preprocessing.
+    ptm <- proc.time() #start the timer
+    setInternet2(use = TRUE)
+    data_file_name <- "repdata%2Fdata%2FStormData.csv.bz2"
+    file_url <- "https://d396qusza40orc.cloudfront.net"
+    
+    #Download the data if it doesn't already exist:
+    if(!file.exists(data_file_name)){
+        print("Downloading Data")
+        download.file(paste(file_url,"/",data_file_name,sep=""),data_file_name, mode = "wb",
+                      method = "auto")
+    }
+    df<- read.csv(data_file_name)
+
+# There is some documentation of the database available to help undestand the file. Here you will
+# find how some of the variables are constructed/defined. Storm Data Documentation = 
+# https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
+# National Climatic Data Center Storm Events FAQ = 
+# https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf
+
+```
+###2.3 Process Data
+
+In order to quantify the impact to public health I have chosen to combine fatalities and injuries 
+into a single measurement that I called "casualties."  For purposes of this analysis, 
+`r injury_fatality_ratio` injuries is assumed to be equal to one fatality.  
+In order to quantify the economic impact I am adding the property damage plus the crop damage.
+
+```{r processhealthdata}
+    numuniqueEVTYPE <- length(unique(df$EVTYPE))
+
+####Analysis for impact to public health
+    #combine injuries and casualties by ratio to get to a single publich health metric
+    df$casualty <- df$INJURIES/injury_fatality_ratio + df$FATALITIES
+    #aggregate by EVTYPE
+    evagg <- aggregate(list(casualty = df$casualty),by=list(EVTYPE = df$EVTYPE),FUN=sum)
+    #order in descending casualty count
+    evagg <- evagg[order(-evagg$casualty),]
+    evagg$EVTYPE[(topcasualty +1):length(evagg$EVTYPE)] <- "OTHER"
+    topcasualtypercent <- round(sum(evagg$casualty[1:topcasualty])/sum(evagg$casualty)*100,0)
+    evagg$EVTYPE <- refactor(evagg$EVTYPE)
+    evagg2<-evagg[1:(topcasualty+1),]
+    evagg2$casualty[topcasualty+1]<- sum(evagg$casualty[evagg$EVTYPE == "OTHER"])
+```
+```{r processeconomicdata}
+####Analysis for economic impact
+    #ignore all records that aren't in billions (B,b), Millions (M,m), or Thousands (K,k)
+    df$totaldamage <- rep(0,length(df$EVTYPE))
+    df$totaldamage <- (df$PROPDMGEXP %in% c("B","b")*1000000000*df$PROPDMG +
+                           df$PROPDMGEXP %in% c("M","m")*1000000*df$PROPDMG +
+                           df$PROPDMGEXP %in% c("K","k")*1000*df$PROPDMG)
+    df$totaldamage <- df$totaldamage + (df$CROPDMGEXP %in% c("B","b")*1000000000*df$CROPDMG +
+                           df$CROPDMGEXP %in% c("M","m")*1000000*df$CROPDMG +
+                           df$CROPDMGEXP %in% c("K","k")*1000*df$CROPDMG)
+    #aggregate by EVTYPE
+    damageagg <- aggregate(list(totaldamage = df$totaldamage),by=list(EVTYPE = df$EVTYPE),FUN=sum)
+    #order in descending economic impact
+    damageagg <- damageagg[order(-damageagg$totaldamage),]
+    damageagg$EVTYPE[(topdamage +1):length(damageagg$EVTYPE)] <- "OTHER"
+    topdamagepercent <- round(sum(damageagg$totaldamage[1:topdamage])/
+                                  sum(damageagg$totaldamage)*100,0)
+    damageagg$EVTYPE <- refactor(damageagg$EVTYPE)
+    damageagg2<-damageagg[1:(topdamage+1),]
+    damageagg2$totaldamage[topdamage+1]<- sum(damageagg$totaldamage[damageagg$EVTYPE == "OTHER"])
+```
+##3.0 Results
+There are `r numuniqueEVTYPE` EVTYPEs.  The top `r topcasualty` represent `r topcasualtypercent`% of
+all casualties.  
+The top `r topdamage` represent `r topdamagepercent`% of all economic damages.  
+These thresholds were chosen because they represent the fewest amount of EVTYPEs that represent at
+least 75% of the respective metric.  
+
+```{r results}
+    pie(evagg2$casualty,labels=evagg2$EVTYPE,col=rainbow(length(evagg2$EVTYPE)),cex=1/2,
+        main="EVTYPEs as a Proportion of Total Casualties")
+    tophealth <- evagg2[1,1]
+    tophealthpercent <- round(evagg2[1,2]/sum(evagg2$casualty)*100,1)
+
+    pie(damageagg2$totaldamage,labels=damageagg2$EVTYPE,col=rainbow(length(damageagg2$EVTYPE)),
+        cex=1/2,main="EVTYPEs as a Proportion of Total Economic Damage")
+    topdamage <- damageagg2[1,1]
+    topdamagepercent <- round(damageagg2[1,2]/sum(damageagg2$totaldamage)*100,1)
+
+```
+
+An EVTYPE of `r tophealth` accounts for `r tophealthpercent`% of casualties, and therefore 
+represents the event most harmful to public health.  
+An EVTYPE of `r topdamage` accounts for `r topdamagepercent`% of economic damages, and therefore 
+represents the highest economic impact.  
+
+##4.0 Session Information
+```{r sessioninfo}
+    date()
+    sessionInfo()
+    print("Execution Time:")
+    proc.time()-ptm
+```
