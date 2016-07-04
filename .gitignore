@@ -1,3 +1,20 @@
+#Files I want to ignore
+Coursera/Exploratory Data Analysis/nogit
+Coursera/Getting and Cleaning Data/nogit
+Coursera/Practical Machine Learning/nogit
+Coursera/R Programming/nogit
+Coursera/Regression Analysis/nogit
+Coursera/Reproducible Research/nogit
+Coursera/Statistical Inference.first time/nogit
+Coursera/Statistical Inference.second time/nogit
+Coursera/The Data Scientist's Toolbox/nogit
+Coursera/a beginner's guide to irrational behavior/nogit
+edx/Data Analysis for Life Sciences/nogit
+edx/MITx 6.00.1x/nogit
+kaggle/nogit
+RUserMeetup/nogit
+Machine Learning/nogit
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -45,3 +62,4 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.Rhistory

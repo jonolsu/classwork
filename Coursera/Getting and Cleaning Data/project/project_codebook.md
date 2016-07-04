@@ -1,0 +1,103 @@
+Data Set Information for aggtidydata.txt:
+
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Data captured represents measurements Using its embedded accelerometer and gyroscope.
+
+This data is stored in wide tidy format.  Each variable measured is in one column, and each observation is in a different row.  The format of the file is space delimited.
+
+By column:
+
+1	groupedavg_subjectgrouped.	This represents the subject (human).  This ranges from 1 to 30 representing 30 different people
+2	groupedavg_activitygroupe.	This represents the activity, of which there are six: LAYING, SITTING, STANDING, WALKING, WALKING_DOWNSTAIRS, WALKING_UPSTAIRS.
+3-79	see_below			These are the variable measurements.  the original source data contains a combination of gyroscope and accelerometer information modified with filters and mathematical calculations.  The data processing includes averaging out all of the measurements.  So every recording of tBodyAcc_mean_X for the combinate of a specific subject and activity is averaged together for the output of this file.
+
+there are 30 subjects and 6 activities.
+30x6=180
+
+So there are 180 records.
+there are 79 data points per record.
+So there are 14,220 data points (79x180)
+
+The file contains a header.
+
+
+
+3 - 79:
+groupedavg_tBodyAcc_mean_X
+groupedavg_tBodyAcc_mean_Y
+groupedavg_tBodyAcc_mean_Z
+groupedavg_tBodyAcc_std_X
+groupedavg_tBodyAcc_std_Y
+groupedavg_tBodyAcc_std_Z
+groupedavg_tGravityAcc_mean_X
+groupedavg_tGravityAcc_mean_Y
+groupedavg_tGravityAcc_mean_Z
+groupedavg_tGravityAcc_std_X
+groupedavg_tGravityAcc_std_Y
+groupedavg_tGravityAcc_std_Z
+groupedavg_tBodyAccJerk_mean_X
+groupedavg_tBodyAccJerk_mean_Y
+groupedavg_tBodyAccJerk_mean_Z
+groupedavg_tBodyAccJerk_std_X
+groupedavg_tBodyAccJerk_std_Y
+groupedavg_tBodyAccJerk_std_Z
+groupedavg_tBodyGyro_mean_X
+groupedavg_tBodyGyro_mean_Y
+groupedavg_tBodyGyro_mean_Z
+groupedavg_tBodyGyro_std_X
+groupedavg_tBodyGyro_std_Y
+groupedavg_tBodyGyro_std_Z
+groupedavg_tBodyGyroJerk_mean_X
+groupedavg_tBodyGyroJerk_mean_Y
+groupedavg_tBodyGyroJerk_mean_Z
+groupedavg_tBodyGyroJerk_std_X
+groupedavg_tBodyGyroJerk_std_Y
+groupedavg_tBodyGyroJerk_std_Z
+groupedavg_tBodyAccMag_mean
+groupedavg_tBodyAccMag_std
+groupedavg_tGravityAccMag_mean
+groupedavg_tGravityAccMag_std
+groupedavg_tBodyAccJerkMag_mean
+groupedavg_tBodyAccJerkMag_std
+groupedavg_tBodyGyroMag_mean
+groupedavg_tBodyGyroMag_std
+groupedavg_tBodyGyroJerkMag_mean
+groupedavg_tBodyGyroJerkMag_std
+groupedavg_fBodyAcc_mean_X
+groupedavg_fBodyAcc_mean_Y
+groupedavg_fBodyAcc_mean_Z
+groupedavg_fBodyAcc_std_X
+groupedavg_fBodyAcc_std_Y
+groupedavg_fBodyAcc_std_Z
+groupedavg_fBodyAcc_meanFreq_X
+groupedavg_fBodyAcc_meanFreq_Y
+groupedavg_fBodyAcc_meanFreq_Z
+groupedavg_fBodyAccJerk_mean_X
+groupedavg_fBodyAccJerk_mean_Y
+groupedavg_fBodyAccJerk_mean_Z
+groupedavg_fBodyAccJerk_std_X
+groupedavg_fBodyAccJerk_std_Y
+groupedavg_fBodyAccJerk_std_Z
+groupedavg_fBodyAccJerk_meanFreq_X
+groupedavg_fBodyAccJerk_meanFreq_Y
+groupedavg_fBodyAccJerk_meanFreq_Z
+groupedavg_fBodyGyro_mean_X
+groupedavg_fBodyGyro_mean_Y
+groupedavg_fBodyGyro_mean_Z
+groupedavg_fBodyGyro_std_X
+groupedavg_fBodyGyro_std_Y
+groupedavg_fBodyGyro_std_Z
+groupedavg_fBodyGyro_meanFreq_X
+groupedavg_fBodyGyro_meanFreq_Y
+groupedavg_fBodyGyro_meanFreq_Z
+groupedavg_fBodyAccMag_mean
+groupedavg_fBodyAccMag_std
+groupedavg_fBodyAccMag_meanFreq
+groupedavg_fBodyBodyAccJerkMag_mean
+groupedavg_fBodyBodyAccJerkMag_std
+groupedavg_fBodyBodyAccJerkMag_meanFreq
+groupedavg_fBodyBodyGyroMag_mean
+groupedavg_fBodyBodyGyroMag_std
+groupedavg_fBodyBodyGyroMag_meanFreq
+groupedavg_fBodyBodyGyroJerkMag_mean
+groupedavg_fBodyBodyGyroJerkMag_std
+groupedavg_fBodyBodyGyroJerkMag_meanFreq
