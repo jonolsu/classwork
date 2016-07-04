@@ -1,0 +1,74 @@
+---
+title: "Practical Machine Learning Coursera Project"
+author: "Jonathan Bennett"
+date: "March 12, 2016"
+output: html_document
+---
+Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).
+
+Data
+
+The training data for this project are available here:
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data are available here:
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.
+
+###Setup
+```{r setup,hide=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+library(caret);library(readr);library(dplyr);library(parallel);library(doParallel);library(ggplot2);library(Rmisc)
+```
+###Read Data from website
+```{r readdata}
+measurements <- read_csv(url("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"))
+quiz <-  read_csv(url("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"))
+
+```
+Clean Data by [dropping problem rows](https://cran.r-project.org/web/packages/readr/readr.pdf), removing missing and NA data, and we're left with the appropriate predictors.
+```{r cleandata}
+measurements <- measurements[-readr::problems(measurements)$row,] #drop problem rows
+keepcols <- sapply(measurements, function(x)sum(is.na(x)|(x=="")))<(.2*nrow(measurements)) #columns where 20% or more are NA or blank
+measurements <- measurements[,keepcols]
+measurements <- measurements[rowSums(is.na(measurements)) == 0,-c(1:7)] #remove all records with NA in remaining columns and dropping first seven columns
+
+```
+Explore Data.  We do not need to pre-process since there are no outliers.  Summary gives a good sense of this, but I also viewed the histogram for each of the 52 predictors and saw a few multi-node distributions, but no significant outliers.  Preprocessing using principle component analysis showed that some predictors could be removed and still account for a large portion of variability, but the random forest application (discovered below) would warrant keeping all variables as long as the execution time was not excessive.
+```{r exploredata}
+summary(measurements)
+```
+
+Segment the measured data into training (75%) and testing(25%), and build the model.  Apply the final model against the quiz data.  The Linear Discriminant Analysis and Naive Bayes model did not provide a fit that equaled the Random Forest Approach.  Use the parallel and doParallel libray to spread the computational effort across multiple CPU cores.  List the predictors by descending importance.  The estimated error rate is listed on the row that says OOB estimate of  error rate, less than 1%.
+```{r buildmodel}
+set.seed(42)
+cl <- parallel::makeCluster(parallel::detectCores()-1)
+doParallel::registerDoParallel(cl) # use all but one CPU core
+
+inTrain <- createDataPartition(y=measurements$classe, p=.75, list=FALSE )
+training <- measurements[inTrain,]
+
+modrf <- train(classe ~ .,data=training,method = "rf") #random forest approach
+prf <- predict(modrf,training)
+confusionMatrix(prf, training$classe)
+varImp(modrf)
+modrf$finalModel
+parallel::stopCluster(cl) # exit cluster        
+```
+Test against the testing data.  This is a good fit.
+```{r testmodel}
+testing <- measurements[-inTrain,]
+prf <- predict(modrf,testing)
+confusionMatrix(prf, testing$classe)
+```
+Predict the quiz data.  Plug the results into the quiz for this project.
+```{r quizdata}
+prf <- predict(modrf,quiz)
+prf
+```
