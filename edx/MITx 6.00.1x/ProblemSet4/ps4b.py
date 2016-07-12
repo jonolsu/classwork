@@ -23,24 +23,16 @@ def compChooseWord(hand, wordList, n):
 
     returns: string or None
     """
-    # BEGIN PSEUDOCODE <-- Remove this comment when you code this function; do your coding within the pseudocode (leaving those comments in-place!)
-    # Create a new variable to store the maximum score seen so far (initially 0)
+    maxseenscore = 0
+    bestword = None
 
-    # Create a new variable to store the best word seen so far (initially None)  
-
-    # For each word in the wordList
-
-        # If you can construct the word from your hand
-        # (hint: you can use isValidWord, or - since you don't really need to test if the word is in the wordList - you can make a similar function that omits that test)
-
-            # Find out how much making that word is worth
-
-            # If the score for that word is higher than your best score
-
-                # Update your best score, and best word accordingly
-
-
-    # return the best word you found.
+    for word in wordList:
+        if(isValidWord(word, hand, wordList)):
+            currentscore = getWordScore(word,n)
+            if(currentscore > maxseenscore):
+                maxseenscore = currentscore
+                bestword = word
+    return bestword
 
 
 #
@@ -65,8 +57,31 @@ def compPlayHand(hand, wordList, n):
     wordList: list (string)
     n: integer (HAND_SIZE; i.e., hand size required for additional points)
     """
-    # TO DO ... <-- Remove this comment when you code this function
-    
+    totalscore = 0
+    gameover = False
+    handlength = calculateHandlen(hand)
+    while(calculateHandlen(hand) > 0 and not(gameover)):
+        print "Current Hand: ",
+        displayHand(hand)
+        
+        newword = compChooseWord(hand,wordList,n)
+        if (newword == None):
+            gameover = True
+        else:
+            if(not(isValidWord(newword, hand, wordList))):
+                print("Invalid word, please try again.")            
+            else:
+                newscore = getWordScore(newword,n)
+                totalscore += newscore
+                print('"' + newword + '"' + ' earned ' + str(newscore) + ' points. Total: ' + str(totalscore) + ' points')
+                print("")
+                hand = updateHand(hand, newword)
+    if(calculateHandlen(hand) > 0):
+        print("Goodbye! Total score: " + str(totalscore) + ' points.') 
+    else:
+        print("Ran out of letters. Total score: " + str(totalscore) + ' points.')
+
+
 #
 # Problem #8: Playing a game
 #
@@ -95,8 +110,45 @@ def playGame(wordList):
 
     wordList: list (string)
     """
-    # TO DO... <-- Remove this comment when you code this function
-    print "playGame not yet implemented." # <-- Remove this when you code this function
+    exitgame = False
+    playedgame = False
+    while (not(exitgame)):
+        gamechoice = raw_input("Enter n to deal a new hand, r to replay the last hand, or e to end game: ")
+        if (gamechoice.lower() == 'n'):
+            hand = dealHand(HAND_SIZE)
+            invalidanswer = True
+            while invalidanswer:
+                player = raw_input("Enter u to have yourself play, c to have the computer play: ")
+                if(player.lower() == 'u' or player.lower() == 'c'):
+                    invalidanswer=False
+                else:
+                    print("Invalid command.")
+                    print
+            if(player == 'c'):
+                compPlayHand(hand,wordList,HAND_SIZE)
+            else:
+                playHand(hand,wordList,HAND_SIZE)
+            playedgame = True
+        elif (gamechoice.lower() == 'r'):
+            if(playedgame == True):
+                invalidanswer = True
+                while invalidanswer:
+                    player = raw_input("Enter u to have yourself play, c to have the computer play: ")
+                    if(player.lower() == 'u' or player.lower() == 'c'):
+                        invalidanswer=False
+                    else:
+                        print("Invalid command.")
+                        print
+                if(player == 'c'):
+                    compPlayHand(hand,wordList,HAND_SIZE)
+                else:
+                    playHand(hand,wordList,HAND_SIZE)
+            else:
+                print("You have not played a hand yet. Please play a new hand first!")
+        elif (gamechoice.lower() == 'e'):
+                exitgame = True
+        else:
+            print("Invalid command.")
 
         
 #

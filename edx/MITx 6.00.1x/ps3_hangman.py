@@ -12,7 +12,7 @@
 import random
 import string
 
-WORDLIST_FILENAME = "c:/github/classwork/edx/MITx 6.00.1x/words.txt"
+WORDLIST_FILENAME = "C:/Users/jbennett02/Documents/Magic Briefcase/classwork/edx/MITx 6.00.1x/words.txt"
 
 def loadWords():
     """
