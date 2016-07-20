@@ -104,7 +104,7 @@ class Queue(object):
         try:
             return self.vals.pop()
         except:
-            raise ValueError()
+            raise ValueError("can't pop an empty queue")
     def __str__(self):
         """Returns a string representation of self"""
         return '{' + ','.join([str(e) for e in self.vals]) + '}'
