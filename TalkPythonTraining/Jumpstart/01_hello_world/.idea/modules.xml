@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/01_hello_world.iml" filepath="$PROJECT_DIR$/.idea/01_hello_world.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../02_guess_number_game/.idea/02_guess_number_game.iml" filepath="$PROJECT_DIR$/../02_guess_number_game/.idea/02_guess_number_game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../03_birthday/.idea/03_birthday.iml" filepath="$PROJECT_DIR$/../03_birthday/.idea/03_birthday.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../04_journal/.idea/04_journal.iml" filepath="$PROJECT_DIR$/../04_journal/.idea/04_journal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../05_weather_client/.idea/05_weather_client.iml" filepath="$PROJECT_DIR$/../05_weather_client/.idea/05_weather_client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../06_lolcat_factory/.idea/06_lolcat_factory.iml" filepath="$PROJECT_DIR$/../06_lolcat_factory/.idea/06_lolcat_factory.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../07_wizard_battle/.idea/07_wizard_battle.iml" filepath="$PROJECT_DIR$/../07_wizard_battle/.idea/07_wizard_battle.iml" />
+    </modules>
+  </component>
+</project>
