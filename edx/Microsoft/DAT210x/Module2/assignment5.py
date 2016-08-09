@@ -2,14 +2,20 @@ import pandas as pd
 import numpy as np
 
 
+
+
 # TODO:
 # Load up the dataset, setting correct header labels
 # Use basic pandas commands to look through the dataset...
 # get a feel for it before proceeding!
 # Find out what value the dataset creators used to
 # represent "nan" and ensure it's properly encoded as np.nan
-#
-# .. your code here ..
+
+df = pd.read_csv("C:/Users/jbennett02/Documents/Magic Briefcase/classwork/edx/Microsoft/DAT210x/Module2/Datasets/census.data",
+header=None, usecols = range(1,9), na_values=["?"])
+df.columns = ['education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification']
+df.dtypes
+
 
 
 # TODO:
