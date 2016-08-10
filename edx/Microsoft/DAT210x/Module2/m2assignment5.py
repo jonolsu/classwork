@@ -12,7 +12,7 @@ import numpy as np
 # represent "nan" and ensure it's properly encoded as np.nan
 
 df = pd.read_csv("C:/Users/jbennett02/Documents/Magic Briefcase/classwork/edx/Microsoft/DAT210x/Module2/Datasets/census.data",
-header=None, usecols = range(1,9), na_values=["?"])
+header=None, usecols = range(1,9))
 df.columns = ['education', 'age', 'capital-gain', 'race', 'capital-loss', 'hours-per-week', 'sex', 'classification']
 df.dtypes
 
@@ -31,7 +31,17 @@ df.dtypes
 # features. Ensure you properly encode any ordinal types using
 # the method discussed in the chapter.
 #
-# .. your code here ..
+ordered_education = ['Preschool', '1st-4th', '5th-6th', '7th-8th', '9th', '10th', '11th', '12th', 'HS-grad', 'Some-college', 'Bachelors', 'Masters', 'Doctorate']
+df.education = df.education.astype("category",
+  ordered=True,
+  categories=ordered_education
+).cat.codes
+
+#ordered_classification = ['<=50K', '<50K']
+#df.classification = df.classification.astype("category",
+#  ordered=True,
+#  categories=ordered_classification
+#).cat.codes
 
 
 # TODO:
@@ -39,8 +49,8 @@ df.dtypes
 # features. Ensure you properly encode any nominal types by
 # exploding them out to new, separate, boolean fatures.
 #
-# .. your code here ..
+df = pd.get_dummies(df,columns=['race','sex','classification'])
 
 
 # TODO:
-# Print out your dataframe
+print(df)
