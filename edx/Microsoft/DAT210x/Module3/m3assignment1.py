@@ -34,4 +34,5 @@ s2 =df[['groove','asymmetry']]
 s1.plot.hist(alpha=0.5)
 
 plt.show()
-
+s2.plot.hist(alpha=0.5)
+plt.show()
