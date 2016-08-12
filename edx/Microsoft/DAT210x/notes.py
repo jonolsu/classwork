@@ -81,3 +81,7 @@ def week2():
     df.iloc[0:1, :]
     df.col0 < 0
     df[ df.col0 < 0 ]
+    
+
+#PCA is for linear reduction
+# Isomap is for non linear reduction
