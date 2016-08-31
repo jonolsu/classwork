@@ -55,9 +55,11 @@ df.classification = df.classification.astype("category",
   categories=ordered_classification
 ).cat.codes
 
+df = pd.get_dummies(df,columns=['race','sex'])
+
 
 #
 # TODO:
 # Print out your dataframe
 #
-# .. your code here ..
+print(df)
