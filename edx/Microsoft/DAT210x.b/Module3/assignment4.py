@@ -9,17 +9,20 @@ matplotlib.style.use('ggplot')
 
 
 #
-# TODO: Load up the Seeds Dataset into a Dataframe
+# Load up the Seeds Dataset into a Dataframe
 # It's located at 'Datasets/wheat.data'
 # 
-# .. your code here ..
+path = "C:/Users/jbennett02/Documents/Magic Briefcase/classwork/edx/Microsoft/DAT210x.b/module3/Datasets/"
+df = pd.read_csv(path + "wheat.data")
 
 
 
 #
-# TODO: Drop the 'id', 'area', and 'perimeter' feature
+# Drop the 'id', 'area', and 'perimeter' feature
 # 
-# .. your code here ..
+df.drop('id', axis=1, inplace=True)
+df.drop('area', axis=1, inplace=True)
+df.drop('perimeter', axis=1, inplace=True)
 
 
 
@@ -27,8 +30,9 @@ matplotlib.style.use('ggplot')
 # TODO: Plot a parallel coordinates chart grouped by
 # the 'wheat_type' feature. Be sure to set the optional
 # display parameter alpha to 0.4
-# 
-# .. your code here ..
+#
+plt.figure()
+parallel_coordinates(df, 'wheat_type', alpha = 0.4)
 
 
 

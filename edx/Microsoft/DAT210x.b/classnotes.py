@@ -2,6 +2,18 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from scipy import misc
 import scipy.io.wavfile as wavfile
+import matplotlib
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.datasets import load_iris
+from pandas.tools.plotting import parallel_coordinates
+from pandas.tools.plotting import andrews_curves
+import numpy as np
+
+
+#to install packages in pycharm, go to terminal and activate the conda environment and then install
+# > activate StandardAnaconda27
+# > conda install matplotlib
 
 def module1():
     """
@@ -212,13 +224,64 @@ def module2():
     #counts
     df.DM_category.value_counts()
 
+def module3():
+    """
+    Notes on module 3
+    """
+
+    # The Seven Basic Tools of Quality: https://en.wikipedia.org/wiki/Seven_Basic_Tools_of_Quality
+
+    #Histogram
+    path = "C:/Users/jbennett02/Documents/Magic Briefcase/classwork/edx/Microsoft/DAT210x.b/module3/Datasets/"
+    df = pd.read_csv(path + "wheat.data")
+    matplotlib.style.use('ggplot')  # Look Pretty
+    df.asymmetry.plot.hist(title='Asymmetry', bins=10)
+    plt.show()
+
+    #2D scatterplot
+    df.plot.scatter(x='area', y='perimeter')
+    plt.show()
+
+    #3D scatterplot
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_xlabel('area')
+    ax.set_ylabel('perimeter')
+    ax.set_zlabel('asymmetry')
+    ax.scatter(df.area, df.perimeter, df.asymmetry, c='r', marker='.')
+    plt.show()
+
+    #Parallel Coordinates -- higher dimensionality visualizations
+    data = load_iris()
+    df = pd.DataFrame(data.data, columns=data.feature_names)
+    df['target_names'] = [data.target_names[i] for i in data.target]
+    # Parallel Coordinates Start Here:
+    plt.figure()
+    parallel_coordinates(df, 'target_names')
+    plt.show()
+
+    #Andrews curve
+    plt.figure()
+    andrews_curves(df, 'target_names')
+    plt.show()
+
+    #correlation plot
+    df = pd.DataFrame(np.random.randn(1000, 5), columns=['a', 'b', 'c', 'd', 'e'])
+    print(df.corr())
+    plt.imshow(df.corr(), cmap=plt.cm.Blues, interpolation='nearest')
+    plt.colorbar()
+    tick_marks = [i for i in range(len(df.columns))]
+    plt.xticks(tick_marks, df.columns, rotation='vertical')
+    plt.yticks(tick_marks, df.columns)
+
+
 def main():
     print("\nModule 1")
     module1()
     print("\nModule 2")
     module2()
-
-
+    print("\nModule 3")
+    module3()
 
 if __name__ == '__main__':
     main()
