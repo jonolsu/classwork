@@ -9,6 +9,7 @@ from sklearn.datasets import load_iris
 from pandas.tools.plotting import parallel_coordinates
 from pandas.tools.plotting import andrews_curves
 import numpy as np
+from sklearn.decomposition import PCA
 
 
 #to install packages in pycharm, go to terminal and activate the conda environment and then install
@@ -274,14 +275,72 @@ def module3():
     plt.xticks(tick_marks, df.columns, rotation='vertical')
     plt.yticks(tick_marks, df.columns)
 
+def module4():
+    """
+    Notes on module 4
+    """
+
+    #make sure features are independent, discriminating, informative
+    #  make sure all features have been properly transformed
+    #  changes either number of features or feature values
+    #  doesn't alter the number of samples of dataset
+    #  wrangling out NAN, label encoding of categorical labels, normalization, standardization -> preprocessor transformers
+    #  applied early on.  Next transformers are a different type.  performed right before modeling, not at beginning
+
+    #principal component analysis (PCA) unsupervised dimensionality reduction algorithm
+    #PCA takes in dataset and spits out uncorrelated linerly independent features
+    #  step 1 -> finds center of data (mean)
+    #  step 2 -> find direction of maximum variance (which direction)
+    #  step 3 -> find all directions that are orthagonal to all other directions
+    #  step 4 -> all new principal components added to list to form brand new feature space which is a linear translation
+    #            or original feature space
+    # scores each feature set by variance.
+    #
+    # An iterative approach to this would first find the center of your data, based off its numeric features.
+    # Next, it would search for the direction that has the most variance or widest spread of values.
+    # That direction is the principal component vector, so it is then added to a list.
+    # By searching for more directions of maximal variance that are orthogonal to all previously computed vectors,
+    # more principal component can then be added to the list. This set of vectors form a new feature space that you can
+    # represent your samples with.
+    #
+    #PCA, and in fact all dimensionality reduction methods, have three main uses:
+    # To handle the clear goal of reducing the dimensionality and thus complexity of your dataset.
+    # To pre-process your data in preparation for other supervised learning tasks, such as regression and classification.
+    # To make visualizing your data easier, since we can only perceive three dimensions simultaneously.
+    #
+    #One warning is that again, being unsupervised, PCA can't tell you exactly know what the newly created components or features mean.
+    #
+    #PCA is a very fast algorithm and helps you vaporizes redundant features,
+    # so when you have a high dimensionality dataset, start by running PCA on it and then visualizing it.
+    # This will better help you understand your data before continuing.
+    #
+    #weakness of PCA
+    # 1) sensitive to feature scaling since it's measuring variance. works best if all quantites are of
+    # same metric.  normalize before feeding into PCA.
+    # 2) PCA is slow if dataset is too big.  use randomized PCA if this becomes an issue
+    # 3) linear translation -- won't discern non-linear variances.  must use ISO Map in this case
+
+
+    #PCA
+    path = "C:/Users/jbennett02/Documents/Magic Briefcase/classwork/edx/Microsoft/DAT210x/Module4/PCA/Datasets/"
+    df = pd.read_csv(path + "kidney_disease.csv")
+    df = df.loc[:,['age','bp','sg','al','su']]
+    df = df.interpolate(method='polynomial', order=2)
+    pca = PCA(n_components=2)
+    pca.fit(df)
+    PCA(copy=True, n_components=2, whiten=False)
+    T = pca.transform(df)
+    print(df.shape)
+    print(T.shape)
 
 def main():
-    print("\nModule 1")
-    module1()
-    print("\nModule 2")
-    module2()
+    #print("\nModule 1")
+    #module1()
+    #print("\nModule 2")
+    #module2()
+    #print("\nModule 3")
+    #module3()
     print("\nModule 3")
-    module3()
-
+    module4()
 if __name__ == '__main__':
     main()
