@@ -35,7 +35,14 @@ labels = ['red' if i=='ckd' else 'green' for i in df.classification]
 # Use an indexer to select only the following columns:
 #       ['bgr','wc','rc']
 #
-df = df[['bgr','wc','rc']]
+#df = df[['bgr','wc','rc']]
+#df.wc = df.wc.map(str.strip)
+#df.wc = df.wc.astype(float)
+#df.rc = df.rc.map(str.strip)
+#df.rc = df.rc.astype(float)
+df.pcv = df.pcv.astype(float)
+
+df = pd.get_dummies(df,columns=['classification', 'rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane'])
 
 
 

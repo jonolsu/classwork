@@ -2,6 +2,16 @@ import pandas as pd
 import numpy as np
 import scipy.io
 import random, math
+import pandas as pd
+
+import scipy.io
+import random, math
+from sklearn.decomposition import PCA
+from sklearn import manifold
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+
+
 
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
@@ -42,7 +52,7 @@ for i in range(num_images):
 
 
 #
-# TODO: Implement PCA here. Reduce the dataframe df down
+# Implement PCA here. Reduce the dataframe df down
 # to THREE components. Once you've done that, call Plot2D.
 #
 # The format is: Plot2D(T, title, x, y, num_to_plot=40):
@@ -51,22 +61,54 @@ for i in range(num_images):
 # x is the principal component you want displayed on the x-axis, Can be 0 or 1
 # y is the principal component you want displayed on the y-axis, Can be 1 or 2
 #
-# .. your code here ..
+pca = PCA(n_components=3)
+pca.fit(df)
+T = pca.transform(df)
+title = "PCA 2D"
+x=1
+y=2
+Plot2D(T, title, x, y, num_to_plot=40)
+
+
+pca = PCA(n_components=3)
+pca.fit(df)
+T = pca.transform(df)
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+x,y,z=T.transpose(1,0)
+ax.scatter(x, y, z, c='r', marker='.')
+fig.suptitle('PCA 3D', fontsize=20)
 
 
 #
-# TODO: Implement Isomap here. Reduce the dataframe df down
+# Implement Isomap here. Reduce the dataframe df down
 # to THREE components. Once you've done that, call Plot2D using
 # the first two components.
 #
-# .. your code here ..
+iso = manifold.Isomap(n_neighbors=8, n_components=3)
+iso.fit(df)
+T = iso.transform(df)
+title = "Isomap 2D plot 0 and 1"
+x=0
+y=1
+Plot2D(T, title, x, y, num_to_plot=40)
+title = "Isomap 2D plot 1 and 2"
+x=1
+y=2
+Plot2D(T, title, x, y, num_to_plot=40)
 
 
-#
-# TODO: If you're up for a challenge, draw your dataframes in 3D
-# Even if you're not, just do it anyway.
-#
-# .. your code here ..
-
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+x,y,z=T.transpose(1,0)
+ax.scatter(x, y, z, c='r', marker='.')
+fig.suptitle('Isomap 3D', fontsize=20)
 
 plt.show()

@@ -10,7 +10,9 @@ from pandas.tools.plotting import parallel_coordinates
 from pandas.tools.plotting import andrews_curves
 import numpy as np
 from sklearn.decomposition import PCA
-
+from sklearn import manifold
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
 
 #to install packages in pycharm, go to terminal and activate the conda environment and then install
 # > activate StandardAnaconda27
@@ -333,6 +335,64 @@ def module4():
     print(df.shape)
     print(T.shape)
 
+    #Isomap
+    # creates a neighborhood . . .nearest neighbors.
+    # as dataset increases in non-linearity isomaps helps.  bends, curves
+    # tracking something moving, high correlation between data points.  handwritten digits.
+    # finds a series of nearest neighbors and maps the path
+    # Isomap is better than linear methods when dealing with almost all types of real image and motion tracking
+    # So long as the underlying relationship is non-linear, another area isomap tends excel at is the grouping
+    #   and identifying of similar variations in similar data samples. Due to this, it is extremely useful as a
+    #   preprocessor step before conducting supervised learning tasks, such as classification or regression.
+    # Finally, isomap's benefits also include all the other reasons you would use PCA or any other dimensionality
+    #   reduction technique, including visualization and data compression.
+    # Slower than PCA
+    # Transformations are irreversible
+    # Isomap is also a bit more sensitive to noise than PCA. Noisy data can actually act as a conduit to
+    #  short-circuit the nearest neighborhood map, cause isomap to prefer the 'noisy' but shorter path
+    #  between samples that lie on the real geodesic surface of your data that would otherwise be well separated.
+    # When using unsupervised dimensionality reduction techniques, be sure to use the feature scaling on all
+    #  of your features because the nearest-neighbor search that Isomap bases your manifold on will do poorly
+    #  if you don't, and PCA will prefer features with larger variances.
+
+    #Isomap (Isometric Feature Mapping)
+    path = "C:/Users/jbennett02/Documents/Magic Briefcase/classwork/edx/Microsoft/DAT210x/Module4/PCA/Datasets/"
+    df = pd.read_csv(path + "kidney_disease.csv")
+    df = df.replace({'?': np.nan}).dropna(axis=0)
+    df = df.dropna(axis=0)
+    df.pcv = df.pcv.astype(float)
+    df = pd.get_dummies(df,columns=['classification', 'rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane'])
+    iso = manifold.Isomap(n_neighbors=4, n_components=2)
+    iso.fit(df)
+    manifold.Isomap(eigen_solver='auto', max_iter=None, n_components=2, n_neighbors=4,
+           neighbors_algorithm='auto', path_method='auto', tol=0)
+    manif = iso.transform(df)
+    print(df.shape)
+    print(manif.shape)
+    print(manif)
+
+def module5():
+    """
+    Notes on module 5
+    """
+
+    #Data Modeling
+    #
+
+    df = pd.DataFrame(np.random.randn(100, 2) * 1.1, columns=['x', 'y'])
+    df.append = (pd.DataFrame(np.random.randn(100, 2) * 0.9, columns=['x', 'y']))
+    df.append = (pd.DataFrame(np.random.randn(100, 2) * 1.5, columns=['x', 'y']))
+    df.append = (pd.DataFrame(np.random.randn(100, 2) * 0.5, columns=['x', 'y']))
+    kmeans = KMeans(n_clusters=5)
+    kmeans.fit(df)
+    KMeans(copy_x=True, init='k-means++', max_iter=300, n_clusters=4, n_init=10,
+           n_jobs=1, precompute_distances='auto', random_state=None, tol=0.0001,
+           verbose=0)
+    labels = kmeans.predict(df)
+    centroids = kmeans.cluster_centers_
+    df.plot.scatter(x='x', y='y')
+    plt.show()
+
 def main():
     #print("\nModule 1")
     #module1()
@@ -340,7 +400,9 @@ def main():
     #module2()
     #print("\nModule 3")
     #module3()
-    print("\nModule 3")
-    module4()
+    #print("\nModule 4")
+    #module4()
+    print("\nModule 5")
+    module5()
 if __name__ == '__main__':
     main()

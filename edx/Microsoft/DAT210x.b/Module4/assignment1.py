@@ -29,7 +29,7 @@ armadillo = pd.DataFrame({
 
 def do_PCA(armadillo):
   #
-  # TODO: Write code to import the libraries required for PCA.
+  # Write code to import the libraries required for PCA.
   # Then, train your PCA on the armadillo dataframe. Finally,
   # drop one dimension (reduce it down to 2D) and project the
   # armadillo down to the 2D principal component feature space.
@@ -39,14 +39,15 @@ def do_PCA(armadillo):
   # not a Pandas dataframe, which is something Pandas does for
   # you automatically. =)
   #
-  # .. your code here ..
-
-  return None
+  from sklearn.decomposition import PCA
+  pca = PCA(n_components=2)
+  pca.fit(armadillo)
+  return pca.transform(armadillo)
 
 
 def do_RandomizedPCA(armadillo):
   #
-  # TODO: Write code to import the libraries required for
+  # Write code to import the libraries required for
   # RandomizedPCA. Then, train your RandomizedPCA on the armadillo
   # dataframe. Finally, drop one dimension (reduce it down to 2D)
   # and project the armadillo down to the 2D principal component
@@ -59,7 +60,11 @@ def do_RandomizedPCA(armadillo):
   #
   # .. your code here ..
 
-  return None
+  from sklearn.decomposition import RandomizedPCA
+  pca = RandomizedPCA(n_components=2)
+  pca.fit(armadillo)
+  return pca.transform(armadillo)
+
 
 
 
