@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="${request.locale_name}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="pyramid web application">
+    <meta name="author" content="Pylons Project">
+    <link rel="shortcut icon" href="${request.static_url('designable_web:static/img/pyramid-16x16.png')}">
+
+    <title>Intro to web design foundations demo</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/bower_components/bootstrap-css/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this scaffold -->
+    <link href="/static/css/theme.css?cacheId=${build_cache_id('/static/css/theme.css')}" rel="stylesheet">
+    <link href="/static/css/site.css?cacheId=${build_cache_id('/static/css/site.css')}" rel="stylesheet">
+    <link href="/static/css/float.css?cacheId=${build_cache_id('/static/css/float.css')}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/static/bower_components/html5shiv/dist/html5shiv.min.js"></script>
+    <script src="/static/bower_components/respond/dest/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div>
+    <div id="top-div">
+        <img src="/static/img/dunecat.jpg" alt="">
+        <div>This is a message</div>
+        <div style="clear: both;"></div>
+    </div>
+
+    <p>+1 kitsch tumeric kale chips. Prism bitters man braid, hell of godard wolf af fashion axe kombucha thundercats
+        beard cred stumptown. Sriracha hella wayfarers pug fam stumptown kickstarter. Put a bird on it etsy try-hard
+        gentrify kogi. Selvage stumptown vinyl everyday carry, iPhone trust fund microdosing banjo kitsch intelligentsia
+        humblebrag keffiyeh sriracha kickstarter. Prism tattooed 8-bit offal fam glossier humblebrag, pug sustainable
+        scenester everyday carry. Deep v gochujang echo park mixtape.</p>
+    <a href="/">&#171; home</a>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/bower_components/jquery-dist/jquery.min.js"></script>
+<script src="/static/bower_components/bootstrap-css/js/bootstrap.min.js"></script>
+</body>
+</html>
